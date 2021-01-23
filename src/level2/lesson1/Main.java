@@ -24,12 +24,6 @@ public class Main {
             obstacles[i] = new Wall();
         }
 
-//         level2.lesson1.Human human = new level2.lesson1.Human("Victor");
-//        System.out.println(human.toString());
-//        level2.lesson1.Wall wall = new level2.lesson1.Wall();
-//        level2.lesson1.Treadmill treadmill = new level2.lesson1.Treadmill();
-//        human.passObstacles(wall);
-//        human.passObstacles(treadmill);
 
 
         for (int i = 0; i < participant.length; i++) {
