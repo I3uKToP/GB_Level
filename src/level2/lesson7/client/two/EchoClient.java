@@ -13,8 +13,10 @@ public class EchoClient extends JFrame {
 
     private final String SERVER_ADDRESS = "localhost";
     private final int SERVER_PORT = 8189;
-    private final int WIDTH =600;
+    private final int WIDTH = 600;
     private final int HEIGHT = 400;
+    private final int TIME_FOR_CLOSE_CONNECTION = 40;
+
 
 
     private JTextField messageInputField;
@@ -25,6 +27,8 @@ public class EchoClient extends JFrame {
     private DataOutputStream dos;
 
     boolean isAuthorized = false;
+
+    private int time = 0;
 
 
     public EchoClient() {
@@ -48,10 +52,25 @@ public class EchoClient extends JFrame {
                         chatArea.append(messageFromServer + "\n");
                         break;
                     }
+
                     chatArea.append(messageFromServer + "\n");
                 }
 
                 while (isAuthorized) {
+                    Thread timeToCloseConnection = new Thread(()->{
+                        while (time < TIME_FOR_CLOSE_CONNECTION && isAuthorized) {
+                            try {
+                                time++;
+                                System.out.println(time);
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        isAuthorized = false;
+                        closeConnect();
+                    });
+                    timeToCloseConnection.start();
                     String messageFromServer = dis.readUTF();
                     chatArea.append(messageFromServer + "\n");
 
@@ -75,6 +94,7 @@ public class EchoClient extends JFrame {
     }
 
     public void sendMessage () {
+
         if (!messageInputField.getText().trim().isEmpty()) {
             try {
                 dos.writeUTF(messageInputField.getText());
@@ -83,6 +103,7 @@ public class EchoClient extends JFrame {
                     closeConnect();
                 }
                 messageInputField.setText("");
+                time = 0;
             } catch (IOException ignored) {}
         }
     }
@@ -115,9 +136,7 @@ public class EchoClient extends JFrame {
 
 
         JButton send = new JButton("Отправить сообщение");
-        send.addActionListener(e -> {
-
-        });
+        send.addActionListener(e -> sendMessage());
         jp[1].add(messageInputField, BorderLayout.CENTER);
         jp[1].add(send, BorderLayout.EAST);
 

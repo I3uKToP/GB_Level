@@ -51,13 +51,15 @@ public class MyServer {
     }
 
 
-    public void sendMessageToCertainClient(ClientHandler clientHandler, String to, String msg) {
+    public synchronized void sendMessageToCertainClient(ClientHandler clientHandler, String to, String msg) {
         for (ClientHandler client : clients) {
             if(client.getName().equals(to)) {
                 client.sendMsg(msg);
                 clientHandler.sendMsg(msg);
+                return;
             }
         }
+        clientHandler.sendMsg("Участника с ником: " + to + " нет онлайн");
     }
 
 
@@ -69,4 +71,12 @@ public class MyServer {
         clients.add(c);
     }
 
+
+    public void getOnlineList(ClientHandler clientHandler) {
+        System.out.println("Сейчас онлайн, нижеследующие пользователи:");
+        for (ClientHandler client : clients) {
+            clientHandler.sendMsg(client.getName());
+        }
+        System.out.println("_________________________________");
+    }
 }

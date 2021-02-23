@@ -13,6 +13,8 @@ public class ClientHandler {
 
     private String name;
 
+    private boolean isAuthorized = false;
+
     public String getName() {
         return name;
     }
@@ -41,7 +43,10 @@ public class ClientHandler {
 
     private void closeConnection() {
         myServer.unsubscribe(this);
-        myServer.broadcastMsg(name + " вышел из чата");
+        if (!name.equals("")) {
+            myServer.broadcastMsg(name + " вышел из чата");
+        }
+
         try {
             dis.close();
         } catch (IOException e) {
@@ -68,6 +73,9 @@ public class ClientHandler {
                     String[] arr = strFromClient.split(" ", 3);
                     myServer.sendMessageToCertainClient(this, arr[1], name + ": " + arr[2]);
                 }
+                if (strFromClient.trim().startsWith("/list")) {
+                    myServer.getOnlineList(this);
+                }
                 if (strFromClient.trim().equals("/end")) {
                     return;
                 }
@@ -79,6 +87,17 @@ public class ClientHandler {
     }
 
     private void authentication() throws IOException {
+        Thread timeForAuthorized = new Thread(()->{
+            try {
+                Thread.sleep(120000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(!isAuthorized) {
+                closeConnection();
+            }
+        });
+        timeForAuthorized.start();
         while (true) {
             String str = dis.readUTF();
             if (str.startsWith("/auth")) {
@@ -86,6 +105,7 @@ public class ClientHandler {
                 String nick = myServer.getAuthService().getNickByLoginAndPassword(parts[1], parts[2]);
                 if (nick != null) {
                     if (!myServer.isNickBusy(nick)) {
+                        isAuthorized = true;
                         sendMsg("/authok " + nick);
                         name = nick;
                         myServer.broadcastMsg(name + " зашел в чат");
