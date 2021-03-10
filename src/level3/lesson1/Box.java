@@ -1,96 +1,59 @@
 package level3.lesson1;
 
 
-public class Box {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-    private String type;
-    private int count = 0;
-    private float weight = 0;
-
+public class Box<T extends Fruit> {
+    private float boxWeight;
+    private final List<T> list;
 
     public Box() {
+        this.boxWeight = 0;
+        this.list = new ArrayList<>();
     }
 
-
     //Добавляет 1 фрукт
-    public <T extends Fruit> void addToBox(T fruit) {
-        if (type == null || fruit.toString().equals(type)) {
-            type = fruit.toString();
-            this.count++;
-            if (type.equals("Apple")) {
-                weight = this.count * 1.0f;
-            }
-            if (type.equals("Orange")) {
-                weight = this.count * 1.5f;
-            }
-        }
+    public void addToBox(T fruit) {
+        this.boxWeight += fruit.getWeight();
+        list.add(fruit);
     }
 
     //Добавляет в бокс количество count фрукта
-    public <T extends Fruit> void addToBox(T fruit, int count) {
-        if (type == null || fruit.toString().equals(type)) {
-            type = fruit.toString();
-            this.count += count;
-            if (type.equals("Apple")) {
-                weight = this.count * 1.0f;
-            }
-            if (type.equals("Orange")) {
-                weight = this.count * 1.5f;
-            }
+    public void addToBox(List<T> fruitTList) {
+        if (fruitTList.size() !=0 ){
+            this.boxWeight += fruitTList.size()* fruitTList.get(0).getWeight();
+            this.list.addAll(fruitTList);
         }
     }
 
-    public void compare (Box boxCompare) {
-        float different = Math.abs(this.weight - boxCompare.getWeightFloat());
-        if (different < 0.0001) {
-            System.out.println("Коробки равны по весу");
-        } else System.out.println("Коробки не равны, разница в весе: " + different);
+    public void addToBox(T ... fruits) {
+        this.boxWeight += fruits.length * fruits[0].getWeight();
+        this.list.addAll(Arrays.asList(fruits));
     }
 
-    // сделал немного логичнее если в коробку с яблоками пересыпать яблоки
-    // то вес суммируется, если нет, то как по условию одни фрукты выкидываются и занимаются теми что переданы
-    public void replaceFruit (Box boxToReplace) {
-        if (type ==null || type.equals(boxToReplace.getType())) {
-            this.count += boxToReplace.getCount();
-            this.weight += boxToReplace.getWeightFloat();
-            this.type = boxToReplace.getType();
+    public void addToBox(T fruit, int count) {
+        for (int i = 0; i < count; i++) {
+            list.add(fruit);
+            this.boxWeight += fruit.getWeight();
         }
-        else {
-            this.count = boxToReplace.getCount();
-            this.type = boxToReplace.getType();
-            this.weight = boxToReplace.getWeightFloat();
-        }
-        boxToReplace.setCount(0);
-        boxToReplace.setType(null);
-        boxToReplace.setWeight(0);
+    }
+
+    public boolean compare(Box<?> boxCompare) {
+        return this.boxWeight == boxCompare.boxWeight;
+    }
+
+    public void replaceFruit (Box<T> boxToReplace) {
+        boxToReplace.boxWeight += this.boxWeight;
+        boxToReplace.list.addAll(this.list);
+        this.list.clear();
     }
 
     public void getWeight() {
-        System.out.println("Вес коробки с " + getType() + " : " + weight);
-    }
-
-    private float getWeightFloat() {
-        return weight;
-    }
-
-
-    public int getCount() {
-        return count;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    private void setType(String type) {
-        this.type = type;
-    }
-
-    private void setCount(int count) {
-        this.count = count;
-    }
-
-    private void setWeight(float weight) {
-        this.weight = weight;
+        if (!this.list.isEmpty()) {
+            System.out.println("Вес коробки с " + this.list.get(0).getClass().getSimpleName() + " : " + boxWeight);
+        }
+        else System.out.println("Коробка пустая");
     }
 }
