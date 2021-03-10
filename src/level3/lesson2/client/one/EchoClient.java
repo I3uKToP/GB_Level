@@ -8,6 +8,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EchoClient extends JFrame {
 
@@ -28,7 +29,7 @@ public class EchoClient extends JFrame {
 
     boolean isAuthorized = false;
 
-    private int time = 0;
+    private AtomicInteger time = new AtomicInteger(0);
 
 
     public EchoClient() {
@@ -56,11 +57,11 @@ public class EchoClient extends JFrame {
                     chatArea.append(messageFromServer + "\n");
                 }
 
-                while (isAuthorized) {
+                if (isAuthorized) {
                     Thread timeToCloseConnection = new Thread(()->{
-                        while (time < TIME_FOR_CLOSE_CONNECTION && isAuthorized) {
+                        while (time.intValue() < TIME_FOR_CLOSE_CONNECTION && isAuthorized) {
                             try {
-                                time++;
+                                time.getAndIncrement();
                                 System.out.println(time);
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
@@ -70,7 +71,12 @@ public class EchoClient extends JFrame {
                         isAuthorized = false;
                         closeConnect();
                     });
+                    timeToCloseConnection.setDaemon(true);
                     timeToCloseConnection.start();
+                }
+
+                while (isAuthorized) {
+
                     String messageFromServer = dis.readUTF();
                     chatArea.append(messageFromServer + "\n");
 
@@ -103,7 +109,7 @@ public class EchoClient extends JFrame {
                     closeConnect();
                 }
                 messageInputField.setText("");
-                time = 0;
+                time = new AtomicInteger(0);
             } catch (IOException ignored) {}
         }
     }

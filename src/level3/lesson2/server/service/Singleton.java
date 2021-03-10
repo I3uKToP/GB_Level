@@ -10,7 +10,7 @@ public class Singleton {
     static final String DB = "jdbc:mysql://localhost/lesson2?useUnicode=true&serverTimezone=UTC&useSSL=false";
     static final String USER = "root";
 
-    static final String PASSWORD = "*********";
+    static final String PASSWORD = "Rjycnhernjh30";
 
     public static Connection connection;
 
