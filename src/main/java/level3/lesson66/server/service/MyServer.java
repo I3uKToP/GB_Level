@@ -1,6 +1,6 @@
-package level3.lesson6.server.service;
+package level3.lesson66.server.service;
 
-import level3.lesson6.server.interfaces.AuthService;
+import level3.lesson66.server.interfaces.AuthService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

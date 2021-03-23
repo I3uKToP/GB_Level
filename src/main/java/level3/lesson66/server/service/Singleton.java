@@ -1,4 +1,4 @@
-package level3.lesson6.server.service;
+package level3.lesson66.server.service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
