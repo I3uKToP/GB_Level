@@ -1,5 +1,6 @@
 package level3.lesson5;
 
+import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 
 public class MainClass {
@@ -8,8 +9,8 @@ public class MainClass {
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Подготовка!!!");
-//        Race race = new Race(new Tunnel());
-        Race race = new Race(new Road(60), new Tunnel(), new Road(40));
+        Race race = new Race(new Tunnel());
+//        Race race = new Race(new Road(60), new Tunnel(), new Road(40));
         Car[] cars = new Car[CARS_COUNT];
         for (int i = 0; i < cars.length; i++) {
             cars[i] = new Car(race, 20 + (int) (Math.random() * 10));
@@ -54,11 +55,6 @@ public class MainClass {
         }
 
         cdl1.await();
-
-
-
-
-
         System.out.println("ВАЖНОЕ ОБЪЯВЛЕНИЕ >>> Гонка закончилась!!!");
     }
 
